@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour
 {
     float moveSpeed = 2f;
+
+    public float score;
 
     [SerializeField] Sprite spriteUp;
     [SerializeField] Sprite spriteDown;
@@ -14,6 +18,8 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     SpriteRenderer sR;
 
+    public TextMeshProUGUI ScoreText;
+
     Vector2 input;
     Vector2 velocity;
     // Start is called before the first frame update
@@ -22,6 +28,7 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sR = GetComponent<SpriteRenderer>();
         rb.bodyType = RigidbodyType2D.Kinematic;
+        score = 0f;
     }
 
     // Update is called once per frame
@@ -53,5 +60,15 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Item"))
+        {
+            score += collision.GetComponent<ItemObject>().GetPoint();
+            Destroy(collision.gameObject);
+            ScoreText.text = "score = " + score;
+        }
     }
 }
